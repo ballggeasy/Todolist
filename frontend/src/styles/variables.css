@@ -1,0 +1,25 @@
+/* src/styles/variables.css */
+:root {
+  /* Earth Tone Colors */
+  --color-primary: #A67C52;
+  --color-secondary: #8B7355;
+  --color-background: #F5F5F1;
+  --color-surface: #FFFFFF;
+  --color-text: #2C1810;
+  --color-text-light: #6B4423;
+  --color-border: #D4C4B7;
+  --color-success: #4A5D23;
+  --color-error: #8B4513;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* Border Radius */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+}

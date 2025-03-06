@@ -1,0 +1,248 @@
+/* src/components/Todo/TodoItem.css */
+.todo-item {
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border-left: 4px solid transparent;
+}
+
+.todo-item:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.todo-item.completed {
+  background-color: rgba(74, 93, 35, 0.1);
+  border-left-color: var(--color-success);
+}
+
+.todo-item.in-progress {
+  background-color: rgba(166, 124, 82, 0.1);
+  border-left-color: var(--color-secondary);
+}
+
+.todo-item.pending {
+  background-color: var(--color-surface);
+  border-left-color: var(--color-border);
+}
+
+/* เพิ่มสไตล์สำหรับรายการที่เลยกำหนด */
+.todo-item.overdue {
+  border-left-color: var(--color-error);
+  background-color: rgba(139, 69, 19, 0.05);
+}
+
+.todo-content {
+  flex: 1;
+}
+
+.todo-content h3 {
+  color: var(--color-text);
+  margin-bottom: var(--spacing-xs);
+}
+
+.todo-content p {
+  color: var(--color-text-light);
+  font-size: 0.9em;
+  margin-bottom: var(--spacing-sm);
+}
+
+.todo-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.todo-status,
+.todo-priority,
+.todo-due-date {
+  display: inline-block;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.8em;
+  text-transform: capitalize;
+}
+
+.todo-status {
+  background-color: var(--color-border);
+}
+
+.status-completed {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.status-pending {
+  background-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.status-in-progress {
+  background-color: var(--color-secondary);
+  color: white;
+}
+
+.todo-priority {
+  background-color: #eee;
+}
+
+.priority-high {
+  background-color: rgba(139, 69, 19, 0.2);
+  color: var(--color-error);
+}
+
+.priority-medium {
+  background-color: rgba(166, 124, 82, 0.2);
+  color: var(--color-secondary);
+}
+
+.priority-low {
+  background-color: rgba(74, 93, 35, 0.2);
+  color: var(--color-success);
+}
+
+.todo-due-date {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--color-text);
+}
+
+/* สไตล์สำหรับการแสดงวันที่เลยกำหนด */
+.todo-due-date.overdue-date {
+  background-color: rgba(139, 69, 19, 0.15);
+  color: var(--color-error);
+  font-weight: bold;
+  position: relative;
+}
+
+.todo-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.btn-edit {
+  background-color: var(--color-secondary);
+  color: white;
+}
+
+.btn-delete {
+  background-color: var(--color-error);
+  color: white;
+}
+
+.todo-item.editing {
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.edit-input,
+.edit-textarea,
+.edit-select {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  font-size: 1em;
+  margin-bottom: var(--spacing-sm);
+}
+
+.edit-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.button-group {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+/* Form group styles for editing mode */
+.form-group {
+  margin-bottom: var(--spacing-sm);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-light);
+  font-size: 0.9em;
+}
+
+/* Error handling styles */
+.error-message {
+  color: white;
+  background-color: var(--color-error);
+  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  text-align: center;
+  font-weight: 500;
+  animation: fadeInError 0.3s ease-in;
+}
+
+/* Fading effect for deletion */
+.todo-item.fading-out {
+  opacity: 0.6;
+  background-color: rgba(139, 69, 19, 0.1);
+  border: 1px solid var(--color-error);
+  animation: fadeOut 3s ease forwards;
+  pointer-events: none;
+}
+
+.todo-item.fading-out .todo-actions button {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Animations */
+@keyframes fadeOut {
+  0% {
+    opacity: 0.8;
+    transform: translateX(0);
+  }
+  80% {
+    opacity: 0.3;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-100%);
+    height: 0;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+@keyframes fadeInError {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* เพิ่ม Animation สำหรับรายการที่เลยกำหนด */
+.todo-item.overdue:not(.completed) {
+  animation: pulse-overdue 2s infinite;
+}
+
+@keyframes pulse-overdue {
+  0% {
+    box-shadow: 0 0 0 rgba(139, 69, 19, 0);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(139, 69, 19, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(139, 69, 19, 0);
+  }
+}

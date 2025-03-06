@@ -1,0 +1,12 @@
+/* src/App.css */
+.app {
+  min-height: 100vh;
+  padding-top: 64px;
+  background-color: var(--color-background);
+}
+
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-md);
+}

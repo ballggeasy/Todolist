@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "todos",
+  "info": {
+    "singularName": "todo",
+    "pluralName": "todos",
+    "displayName": "todo",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "attributes": {
+      "type": "string"
+    },
+    "description": {
+      "type": "blocks"
+    },
+    "isCompleted": {
+      "type": "boolean",
+      "default": false
+    },
+    "dueDate": {
+      "type": "date"
+    },
+    "priority": {
+      "type": "enumeration",
+      "enum": [
+        "Low",
+        "Medium",
+        "High"
+      ]
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "todos"
+    }
+  }
+}
