@@ -9,67 +9,77 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState(0);
   const [agreeTerms, setAgreeTerms] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState(0);
   
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  // Add animation class after component mounts
+  // Monitor password strength
   useEffect(() => {
-    const timer = setTimeout(() => {
-      document.querySelector('.register-form').classList.add('form-visible');
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Password strength checker
-  useEffect(() => {
-    if (password.length === 0) {
+    if (!password) {
       setPasswordStrength(0);
       return;
     }
     
     let strength = 0;
-    if (password.length >= 8) strength += 25;
-    if (/[A-Z]/.test(password)) strength += 25;
-    if (/[0-9]/.test(password)) strength += 25;
-    if (/[^A-Za-z0-9]/.test(password)) strength += 25;
+    
+    // Length check (8+ characters)
+    if (password.length >= 8) strength += 1;
+    
+    // Case check (upper and lower)
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 1;
+    
+    // Numeric check
+    if (/[0-9]/.test(password)) strength += 1;
+    
+    // Special character check
+    if (/[^a-zA-Z0-9]/.test(password)) strength += 1;
     
     setPasswordStrength(strength);
   }, [password]);
 
+  const getStrengthText = () => {
+    if (!password) return '';
+    const texts = ['Very Weak', 'Weak', 'Medium', 'Good', 'Strong'];
+    return texts[passwordStrength];
+  };
+
+  const getStrengthColor = () => {
+    if (!password) return '#ddd';
+    const colors = ['#dc3545', '#ffc107', '#6c757d', '#28a745', '#20c997'];
+    return colors[passwordStrength];
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);
+    setIsSubmitting(true);
 
-    // Form validation
-    if (!username || !email || !password || !confirmPassword) {
+    // Validate inputs
+    if (!username.trim() || !email.trim() || !password.trim()) {
       setError('All fields are required');
-      setIsLoading(false);
+      setIsSubmitting(false);
       return;
     }
-    
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
-      setIsLoading(false);
+      setIsSubmitting(false);
       return;
     }
-    
-    if (passwordStrength < 50) {
+
+    if (passwordStrength < 2) {
       setError('Please use a stronger password');
-      setIsLoading(false);
+      setIsSubmitting(false);
       return;
     }
-    
+
     if (!agreeTerms) {
-      setError('You must agree to the Terms of Service');
-      setIsLoading(false);
+      setError('You must agree to the terms of service and privacy policy');
+      setIsSubmitting(false);
       return;
     }
 
@@ -78,164 +88,131 @@ const Register = () => {
       if (result.success) {
         navigate('/todos');
       } else {
-        setError(result.error || 'Registration failed. Please try again.');
+        setError(result.error);
+        setIsSubmitting(false);
       }
-    } catch (error) {
-      setError('An unexpected error occurred. Please try again.');
-    } finally {
-      setIsLoading(false);
+    } catch (err) {
+      setError('Registration failed. Please try again.');
+      setIsSubmitting(false);
     }
-  };
-
-  // Get password strength color
-  const getStrengthColor = () => {
-    if (passwordStrength < 25) return 'var(--color-error)';
-    if (passwordStrength < 50) return '#FFA500';
-    if (passwordStrength < 75) return '#FFCC00';
-    return 'var(--color-success)';
-  };
-
-  // Get password strength label
-  const getStrengthLabel = () => {
-    if (passwordStrength === 0) return '';
-    if (passwordStrength < 25) return 'Very Weak';
-    if (passwordStrength < 50) return 'Weak';
-    if (passwordStrength < 75) return 'Moderate';
-    if (passwordStrength < 100) return 'Strong';
-    return 'Very Strong';
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
   };
 
   return (
     <div className="register-container">
-      <div className="register-content">
-        <div className="register-image-container">
-          <div className="register-overlay"></div>
-          <div className="register-quote">
-            <h3>Start organizing your tasks today</h3>
-            <p>Join thousands of users who trust TodoApp for their daily task management</p>
+      <div className="auth-card">
+        {/* Left Panel - Branding */}
+        <div className="auth-branding">
+          <div className="brand-content">
+            <h2 className="brand-tagline">Start organizing your tasks today</h2>
+            <p className="brand-subtext">Join thousands of users who trust TodoApp for their daily task management</p>
           </div>
+          <div className="decorative-circle"></div>
         </div>
         
-        <div className="register-form-container">
+        {/* Right Panel - Form */}
+        <div className="auth-form-container">
+          <h1 className="auth-form-title">Create Account</h1>
+          <p className="auth-form-subtitle">Fill in your details to get started</p>
+          
+          {error && <div className="error-message">{error}</div>}
+          
           <form className="register-form" onSubmit={handleSubmit}>
-            <h2>Create Account</h2>
-            <p className="register-subtitle">Fill in your details to get started</p>
-            
-            {error && <div className="error-message">{error}</div>}
-            
             <div className="form-group">
               <label htmlFor="username">Username</label>
-              <div className="input-with-icon">
-                <i className="fa fa-user icon"></i>
-                <input
-                  type="text"
-                  id="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Choose a username"
-                  required
-                />
-              </div>
+              <input
+                type="text"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Choose a username"
+                autoComplete="username"
+                required
+              />
             </div>
-
+            
             <div className="form-group">
               <label htmlFor="email">Email</label>
-              <div className="input-with-icon">
-                <i className="fa fa-envelope icon"></i>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email address"
-                  required
-                />
-              </div>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email address"
+                autoComplete="email"
+                required
+              />
             </div>
-
+            
             <div className="form-group">
               <label htmlFor="password">Password</label>
-              <div className="input-with-icon">
-                <i className="fa fa-lock icon"></i>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Create a strong password"
-                  required
-                />
-                <span 
-                  className="password-toggle" 
-                  onClick={togglePasswordVisibility}
-                >
-                  <i className={`fa ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
-                </span>
-              </div>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Create a strong password"
+                autoComplete="new-password"
+                required
+              />
               {password && (
                 <div className="password-strength">
-                  <div className="strength-bar-container">
-                    <div 
-                      className="strength-bar" 
-                      style={{ width: `${passwordStrength}%`, backgroundColor: getStrengthColor() }}
+                  <div className="strength-meter">
+                    <div
+                      className="strength-meter-fill"
+                      style={{
+                        width: `${(passwordStrength + 1) * 20}%`,
+                        backgroundColor: getStrengthColor()
+                      }}
                     ></div>
                   </div>
-                  <span className="strength-label" style={{ color: getStrengthColor() }}>
-                    {getStrengthLabel()}
-                  </span>
+                  <div className="strength-text" style={{ color: getStrengthColor() }}>
+                    {getStrengthText()}
+                  </div>
                 </div>
               )}
             </div>
-
+            
             <div className="form-group">
               <label htmlFor="confirmPassword">Confirm Password</label>
-              <div className="input-with-icon">
-                <i className="fa fa-lock icon"></i>
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  id="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm your password"
-                  required
-                />
-                <span 
-                  className="password-toggle" 
-                  onClick={toggleConfirmPasswordVisibility}
-                >
-                  <i className={`fa ${showConfirmPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
-                </span>
-              </div>
+              <input
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm your password"
+                autoComplete="new-password"
+                required
+              />
+              {confirmPassword && password !== confirmPassword && (
+                <div className="password-match-error">Passwords do not match</div>
+              )}
             </div>
             
-            <div className="terms-checkbox">
+            <div className="form-check">
               <input
                 type="checkbox"
                 id="agreeTerms"
                 checked={agreeTerms}
                 onChange={(e) => setAgreeTerms(e.target.checked)}
+                required
               />
               <label htmlFor="agreeTerms">
-                I agree to the <a href="/terms" className="terms-link">Terms of Service</a> and <a href="/privacy" className="terms-link">Privacy Policy</a>
+                I agree to the <Link to="/terms">Terms of Service</Link> and <Link to="/privacy">Privacy Policy</Link>
               </label>
             </div>
             
-            <button type="submit" className="btn btn-primary register-btn" disabled={isLoading}>
-              {isLoading ? 'Creating Account...' : 'Create Account'}
+            <button
+              type="submit"
+              className="btn-submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Creating Account...' : 'Create Account'}
             </button>
-            
-            <div className="login-link">
-              Already have an account? <Link to="/login">Sign In</Link>
-            </div>
           </form>
+          
+          <div className="auth-alternative">
+            Already have an account? <Link to="/login">Sign In</Link>
+          </div>
         </div>
       </div>
     </div>
